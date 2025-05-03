@@ -1,0 +1,8 @@
+{
+  "name": "QeeQCoder",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "2470675b"
+}

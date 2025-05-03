@@ -1,0 +1,83 @@
+:root {
+  --branco: #ffff;
+  --gelo: #f1f1f1;
+  --verde: #ccff00;
+  --preto: #000000;
+}
+
+.slider {
+  position: relative;
+  overflow: hidden;
+  background-image: url("/resources/img/backgroud01.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.slide {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  transition: all 0.5s ease;
+}
+
+.slide.active {
+  display: flex;
+}
+
+.slide .text {
+  flex: 1;
+  min-width: 220px;
+}
+
+.slide h2 {
+  color: #000000;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.slide p {
+  color: #1b1b1b;
+  margin: 8px 0;
+}
+
+.slide button {
+  padding: 10px 40px;
+  background: var(--preto);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.slide img {
+  width: 90px;
+  height: auto;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  margin-left: 22px;
+  margin-top: 20px;
+  gap: 5px;
+}
+
+.dot {
+  width: 20px;
+  height: 10px;
+  background: #1a1a1a55;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dot.active {
+  background: var(--verde);
+}

@@ -1,0 +1,51 @@
+/* For information on how to create your own theme, please see:
+http://ionicframework.com/docs/theming/ */
+
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+* {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Altera a cor dos ícones quando a aba está ativa */
+ion-tab-button.tab-selected ion-icon {
+  color: var(--verde);
+  height: 30px;
+}
+
+/* Altera a cor do texto quando a aba está ativa */
+ion-tab-button.tab-selected .tab-label {
+  color: var(--verde);
+  height: 38px;
+  opacity: 1;
+}
+
+/* cores onde  os botões estão*/
+#tab-button-home {
+  background-color: rgb(0, 0, 0);
+}
+
+#tab-button-products {
+  background-color: black;
+}
+
+#tab-button-favorites {
+  background-color: black;
+}
+
+#tab-button-profile {
+  background-color: rgba(0, 0, 0, 0.445);
+}
+
+.ion-tab-bar {
+  background-color: rgb(0, 0, 0);
+  height: 80px;
+}
+/* imput/Busca*/
+.searchbar-input-container .sc-ion-searchbar-md {
+  background-color: #e1e2e1;
+  border-radius: 20px;
+  color: rgb(160, 160, 160);
+}

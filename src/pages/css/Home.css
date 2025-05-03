@@ -1,0 +1,29 @@
+:root {
+  --branco: #ffff;
+  --gelo: #f1f1f1;
+  --verde: #ccff00;
+  --preto: #000000;
+}
+
+.txbarra-superior {
+  margin-left: 33%;
+  box-shadow: none;
+}
+
+/* background */
+.busca {
+  background-color: rgb(255, 255, 255);
+}
+
+.titulo {
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+/*Nome "CATEGORIA DE PRODUTOS */
+.categoriaspro {
+  background-color: var(--preto);
+  color: var(--branco);
+  text-align: center;
+  margin-top: 1px;
+}
