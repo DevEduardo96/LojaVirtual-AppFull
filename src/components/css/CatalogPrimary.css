@@ -1,9 +1,15 @@
+:root {
+  --branco: #ffff;
+  --gelo: #f1f1f1;
+  --verde: #ccff00;
+  --preto: #000000;
+}
+
 .catalog-simple {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* duas colunas */
   gap: 20px;
   padding: 20px;
-  background-color: #f6f6f6;
-  font-family: sans-serif;
 }
 
 .card-simple {
@@ -58,4 +64,22 @@
   font-size: 0.85rem;
   font-weight: bold;
   color: #444;
+}
+
+.add-to-cart-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--preto);
+  color: var(--branco);
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.add-to-cart-btn:hover {
+  background: rgb(92, 92, 92);
+  transform: scale(1.03);
 }

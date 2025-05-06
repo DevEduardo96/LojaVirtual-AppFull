@@ -12,7 +12,6 @@ import "./css/Home.css";
 import Cart from "../components/ExploreContainer";
 import Slider from "../components/Slider";
 import CategoryCatalog from "../components/CategoryCatalog";
-import Catalog from "../components/Catalog";
 import CatalogPrimary from "../components/CatalogPrimary";
 
 const Home: React.FC = () => {

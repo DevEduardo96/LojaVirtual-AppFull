@@ -20,17 +20,12 @@ const Favorites: React.FC = () => {
         </IonToolbar>
         <IonToolbar className="titulos">
           <IonTitle className="titulos">
-            <Cart></Cart>
+            <Cart />
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
           </IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <div className="p-4">
-          <h2 className="text-xl font-bold">Seus Favoritos</h2>
-          {/* Add your favorites list here */}
-        </div>
-      </IonContent>
+      <IonContent fullscreen></IonContent>
     </IonPage>
   );
 };

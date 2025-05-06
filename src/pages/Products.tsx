@@ -10,7 +10,8 @@ import {
 
 import "./css/Home.css";
 import Cart from "../components/ExploreContainer";
-import Catalog from "../components/Catalog";
+import ProductCatalog from "../components/ProductCatalog";
+import CategoryCatalog from "../components/CategoryCatalog";
 
 const Products: React.FC = () => {
   return (
@@ -25,9 +26,10 @@ const Products: React.FC = () => {
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
           </IonTitle>
         </IonToolbar>
+        <CategoryCatalog />
       </IonHeader>
       <IonContent fullscreen>
-        <Catalog />
+        <ProductCatalog />
       </IonContent>
     </IonPage>
   );

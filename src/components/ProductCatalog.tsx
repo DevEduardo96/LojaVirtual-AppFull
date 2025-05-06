@@ -20,19 +20,32 @@ type Produto = {
 const CatalogPrimary: React.FC = () => {
   const [products, setProducts] = useState<Produto[]>([]);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
 
   const token = localStorage.getItem("jwt");
 
+  const fetchProducts = async (pageNumber: number) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${API_URL}/api/produtos?populate=*&pagination[page]=${pageNumber}&pagination[pageSize]=6`
+      );
+      const json = await res.json();
+      setProducts((prev) => [...prev, ...json.data]);
+      setError(null);
+    } catch (err) {
+      setError("Erro ao buscar produtos. Tente novamente mais tarde.");
+      console.error("Erro ao buscar produtos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch(
-      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=2`
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        setProducts(json.data);
-      })
-      .catch((err) => console.error("Erro ao buscar produtos:", err));
-  }, []);
+    fetchProducts(page);
+  }, [page]);
 
   const favoritarProduto = async (produtoId: number) => {
     if (!token) {
@@ -56,8 +69,14 @@ const CatalogPrimary: React.FC = () => {
 
       if (!res.ok) throw new Error("Erro ao favoritar");
 
-      // Atualiza visualmente o estado
-      setFavoritedIds((prev) => [...prev, produtoId]);
+      setFavoritedIds((prev) =>
+        prev.includes(produtoId)
+          ? prev.filter((id) => id !== produtoId)
+          : [...prev, produtoId]
+      );
+
+      // Exibe o alerta de "Adicionado aos Favoritos"
+      alert("Adicionado aos Favoritos");
     } catch (err) {
       console.error(err);
     }
@@ -65,6 +84,8 @@ const CatalogPrimary: React.FC = () => {
 
   return (
     <div className="catalog-simple">
+      {loading && <div>Carregando...</div>}
+      {error && <div>{error}</div>}
       {products.map((product) => {
         const imagem = product.Imagem?.[0];
         const imageUrl =
@@ -93,6 +114,9 @@ const CatalogPrimary: React.FC = () => {
           </div>
         );
       })}
+      <button onClick={() => setPage((prev) => prev + 1)} disabled={loading}>
+        {loading ? "Carregando..." : "Carregar Mais"}
+      </button>
     </div>
   );
 };
