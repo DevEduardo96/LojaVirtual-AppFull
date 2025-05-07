@@ -24,7 +24,11 @@ ion-tab-button.tab-selected .tab-label {
 
 /* cores onde  os botões estão*/
 #tab-button-home {
+<<<<<<< HEAD
   background-color: rgb(0, 0, 0);
+=======
+  background-color: black;
+>>>>>>> 9037be7 (Integrações ao Carrinho)
 }
 
 #tab-button-products {
@@ -36,11 +40,19 @@ ion-tab-button.tab-selected .tab-label {
 }
 
 #tab-button-profile {
+<<<<<<< HEAD
   background-color: rgba(0, 0, 0, 0.445);
 }
 
 .ion-tab-bar {
   background-color: rgb(0, 0, 0);
+=======
+  background-color: black;
+}
+
+.ion-tab-bar {
+  background-color: black;
+>>>>>>> 9037be7 (Integrações ao Carrinho)
   height: 80px;
 }
 /* imput/Busca*/

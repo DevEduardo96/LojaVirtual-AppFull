@@ -29,7 +29,23 @@ const Products: React.FC = () => {
         <CategoryCatalog />
       </IonHeader>
       <IonContent fullscreen>
+<<<<<<< HEAD
         <ProductCatalog />
+=======
+        <ProductCatalog
+          addToCart={function (product: {
+            id: number;
+            Nome: string;
+            Preco: number;
+            Imagem: {
+              url: string;
+              formats?: { thumbnail?: { url: string } };
+            }[];
+          }): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
+>>>>>>> 9037be7 (Integrações ao Carrinho)
       </IonContent>
     </IonPage>
   );

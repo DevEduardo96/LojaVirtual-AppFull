@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./css/CatalogPrimary.css";
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9037be7 (Integrações ao Carrinho)
 const API_URL = "http://localhost:1337";
 
 type Produto = {
@@ -17,7 +20,15 @@ type Produto = {
   }[];
 };
 
+<<<<<<< HEAD
 const CatalogPrimary: React.FC = () => {
+=======
+type Props = {
+  addToCart: (produto: Produto) => void; // Recebe a função addToCart como prop
+};
+
+const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
+>>>>>>> 9037be7 (Integrações ao Carrinho)
   const [products, setProducts] = useState<Produto[]>([]);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
 
@@ -89,7 +100,16 @@ const CatalogPrimary: React.FC = () => {
               <span className="price">R$ {product.Preco.toFixed(2)}</span>
               <span className="rating">4.5 ⭐</span>
             </div>
+<<<<<<< HEAD
             <button className="add-to-cart-btn">Adicionar</button>
+=======
+            <button
+              className="add-to-cart-btn"
+              onClick={() => addToCart(product)} // Chama addToCart ao clicar
+            >
+              Adicionar
+            </button>
+>>>>>>> 9037be7 (Integrações ao Carrinho)
           </div>
         );
       })}
