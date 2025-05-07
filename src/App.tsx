@@ -61,7 +61,12 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
 }) => {
-  const { cartItems } = useCart();
+  const { cartItems, removeFromCart } = useCart();
+
+  const totalGeral = cartItems.reduce(
+    (total, item) => total + item.Preco * item.quantidade,
+    0
+  );
 
   return (
     <IonModal
@@ -97,13 +102,20 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     borderRadius: 8,
                   }}
                 />
-                <IonLabel>
+                <IonLabel className="ion-text-wrap">
                   <h2>{item.Nome}</h2>
                   <p>
                     R$ {item.Preco.toFixed(2)} x {item.quantidade}
                   </p>
                   <p>Total: R$ {(item.Preco * item.quantidade).toFixed(2)}</p>
                 </IonLabel>
+                <IonButton
+                  color="danger"
+                  slot="end"
+                  onClick={() => removeFromCart(item.id)}
+                >
+                  Remover
+                </IonButton>
               </IonItem>
             ))
           ) : (
@@ -112,6 +124,19 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             </IonItem>
           )}
         </IonList>
+
+        {cartItems.length > 0 && (
+          <IonItem lines="none">
+            <IonLabel className="ion-text-wrap">
+              <h2 style={{ fontWeight: "bold" }}>Total geral:</h2>
+            </IonLabel>
+            <IonLabel slot="end">
+              <h2 style={{ color: "green", fontWeight: "bold" }}>
+                R$ {totalGeral.toFixed(2)}
+              </h2>
+            </IonLabel>
+          </IonItem>
+        )}
       </IonContent>
     </IonModal>
   );
