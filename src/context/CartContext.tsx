@@ -7,6 +7,7 @@ export interface Produto {
 }
 
 interface ItemCarrinho extends Produto {
+  Imagem: any;
   quantidade: number;
 }
 
