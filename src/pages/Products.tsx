@@ -13,7 +13,21 @@ import Cart from "../components/ExploreContainer";
 import ProductCatalog from "../components/ProductCatalog";
 import CategoryCatalog from "../components/CategoryCatalog";
 
-const Products: React.FC = () => {
+type Produto = {
+  id: number;
+  Nome: string;
+  Preco: number;
+  Imagem: {
+    url: string;
+    formats?: { thumbnail?: { url: string } };
+  }[];
+};
+
+type ProductsProps = {
+  addToCart: (product: Produto) => void;
+};
+
+const Products: React.FC<ProductsProps> = ({ addToCart }) => {
   return (
     <IonPage>
       <IonHeader>
@@ -22,30 +36,14 @@ const Products: React.FC = () => {
         </IonToolbar>
         <IonToolbar>
           <IonTitle className="titulos">
-            <Cart></Cart>
+            <Cart />
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
           </IonTitle>
         </IonToolbar>
         <CategoryCatalog />
       </IonHeader>
       <IonContent fullscreen>
-<<<<<<< HEAD
-        <ProductCatalog />
-=======
-        <ProductCatalog
-          addToCart={function (product: {
-            id: number;
-            Nome: string;
-            Preco: number;
-            Imagem: {
-              url: string;
-              formats?: { thumbnail?: { url: string } };
-            }[];
-          }): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
->>>>>>> 9037be7 (Integrações ao Carrinho)
+        <ProductCatalog addToCart={addToCart} />
       </IonContent>
     </IonPage>
   );
