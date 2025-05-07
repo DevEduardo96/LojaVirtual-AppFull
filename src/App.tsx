@@ -57,7 +57,6 @@ type Produto = {
 
 setupIonicReact();
 
-// Modal separado para usar o hook useCart
 const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
@@ -74,8 +73,10 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     >
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Seu Carrinho</IonTitle>
-          <IonButton slot="end" onClick={onClose}>
+          <IonTitle>
+            <h1>Carrinho de Compras</h1>
+          </IonTitle>
+          <IonButton className="btn-fechar" slot="end" onClick={onClose}>
             Fechar
           </IonButton>
         </IonToolbar>
@@ -86,7 +87,7 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             cartItems.map((item) => (
               <IonItem key={item.id}>
                 <img
-                  src={`${API_URL}${item.Imagem[0]?.url}`} // Correção para acessar a URL da imagem
+                  src={`${API_URL}${item.Imagem[0]?.url}`}
                   alt={item.Nome}
                   style={{
                     width: 60,
@@ -127,7 +128,11 @@ const App: React.FC = () => {
 
           <IonTabs>
             <IonRouterOutlet id="main-content">
-              <Route exact path="/home" component={Home} />
+              <Route
+                exact
+                path="/home"
+                render={() => <Home onCartClick={() => setCartOpen(true)} />}
+              />
               <Route exact path="/products" component={Products} />
               <Route exact path="/favorites" component={Favorites} />
               <Route exact path="/profile" component={Profile} />
@@ -144,11 +149,8 @@ const App: React.FC = () => {
 
               <IonTabButton
                 tab="products"
+                href="/products"
                 className="tab-button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCartOpen(true);
-                }}
               >
                 <IonIcon icon={cart} />
                 <IonLabel className="tab-label">Carrinho</IonLabel>

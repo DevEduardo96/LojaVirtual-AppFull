@@ -16,8 +16,12 @@ import Slider from "../components/Slider";
 import CategoryCatalog from "../components/CategoryCatalog";
 import CatalogPrimary from "../components/CatalogPrimary";
 
-const Home: React.FC = () => {
-  const { addToCart } = useCart(); // pega a função real do contexto
+interface HomeProps {
+  onCartClick: () => void;
+}
+
+const Home: React.FC<HomeProps> = ({ onCartClick }) => {
+  const { addToCart } = useCart();
 
   return (
     <IonPage>
@@ -28,7 +32,7 @@ const Home: React.FC = () => {
 
         <IonToolbar className="ion-toolbar">
           <IonTitle className="titulo">
-            <Cart />
+            <Cart onCartClick={onCartClick} />
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
           </IonTitle>
         </IonToolbar>
