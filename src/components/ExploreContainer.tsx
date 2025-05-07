@@ -1,4 +1,5 @@
-// ExploreContainer.tsx
+import React, { useEffect, useRef } from "react";
+import { useCart } from "../context/CartContext";
 import "./ExploreContainer.css";
 
 interface CartProps {
@@ -6,6 +7,21 @@ interface CartProps {
 }
 
 const Cart: React.FC<CartProps> = ({ onCartClick }) => {
+  const { cartItems } = useCart();
+  const cartRef = useRef<HTMLAnchorElement>(null);
+
+  const totalQuantity = cartItems.reduce(
+    (total, item) => total + item.quantidade,
+    0
+  );
+
+  // Atualiza dinamicamente o atributo data-count com JS
+  useEffect(() => {
+    if (cartRef.current) {
+      cartRef.current.setAttribute("data-count", String(totalQuantity));
+    }
+  }, [totalQuantity]);
+
   return (
     <div className="top-nav">
       <div className="logo">
@@ -14,7 +30,7 @@ const Cart: React.FC<CartProps> = ({ onCartClick }) => {
       <a
         href="#"
         className="btn-cart"
-        data-count="3"
+        ref={cartRef}
         onClick={(e) => {
           e.preventDefault();
           onCartClick();

@@ -25,9 +25,10 @@ type Produto = {
 
 type ProductsProps = {
   addToCart: (product: Produto) => void;
+  onCartClick: () => void;
 };
 
-const Products: React.FC<ProductsProps> = ({ addToCart }) => {
+const Products: React.FC<ProductsProps> = ({ addToCart, onCartClick }) => {
   return (
     <IonPage>
       <IonHeader>
@@ -36,7 +37,7 @@ const Products: React.FC<ProductsProps> = ({ addToCart }) => {
         </IonToolbar>
         <IonToolbar>
           <IonTitle className="titulos">
-            <Cart />
+            <Cart onCartClick={onCartClick} />
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
           </IonTitle>
         </IonToolbar>

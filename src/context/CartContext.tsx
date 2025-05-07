@@ -7,8 +7,9 @@ export interface Produto {
 }
 
 interface ItemCarrinho extends Produto {
-  Imagem: any;
+  Imagem?: any;
   quantidade: number;
+  isAnimating?: boolean; // Novo campo
 }
 
 interface CartContextType {
@@ -16,6 +17,7 @@ interface CartContextType {
   addToCart: (produto: Produto) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
+  triggerAnimation: (id: number) => void; // Novo método
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,13 +33,16 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       if (itemExistente) {
         return prevItems.map((item) =>
           item.id === produto.id
-            ? { ...item, quantidade: item.quantidade + 1 }
+            ? { ...item, quantidade: item.quantidade + 1, isAnimating: true }
             : item
         );
       } else {
-        return [...prevItems, { ...produto, quantidade: 1 }];
+        return [...prevItems, { ...produto, quantidade: 1, isAnimating: true }];
       }
     });
+
+    // Limpar a animação após um tempo
+    setTimeout(() => triggerAnimation(produto.id, false), 300); // 300ms de animação
   };
 
   const removeFromCart = (id: number) => {
@@ -48,9 +53,23 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     setCartItems([]);
   };
 
+  const triggerAnimation = (id: number, animate = true) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, isAnimating: animate } : item
+      )
+    );
+  };
+
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, clearCart }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        triggerAnimation,
+      }}
     >
       {children}
     </CartContext.Provider>
