@@ -1,47 +1,40 @@
 import React, { useEffect, useState } from "react";
 import "./css/CatalogPrimary.css";
 
-type DescricaoBlock = {
-  type: string;
-  children: { type: string; text: string }[];
-};
+const API_URL = "http://localhost:1337";
 
 type Produto = {
   id: number;
-  attributes: {
-    Nome: string;
-    Preco: number;
-    Descricao: DescricaoBlock[];
-    Imagem: {
-      data: {
-        attributes: {
-          url: string;
-        };
-      } | null;
+  Nome: string;
+  Preco: number;
+  Imagem: {
+    url: string;
+    formats?: {
+      thumbnail?: {
+        url: string;
+      };
     };
-  };
+  }[];
 };
 
-const API_URL = "http://localhost:1337";
+type Props = {
+  addToCart: (produto: Produto) => void; // Recebe a função addToCart como prop
+};
 
-const ProductCatalog: React.FC = () => {
-  const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [loading, setLoading] = useState(true);
+const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
+  const [products, setProducts] = useState<Produto[]>([]);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
-
   const token = localStorage.getItem("jwt");
 
   useEffect(() => {
-    fetch(`${API_URL}/api/produtos?populate=Imagem`)
+    fetch(
+      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=5`
+    )
       .then((res) => res.json())
       .then((json) => {
-        setProdutos(json.data);
-        setLoading(false);
+        setProducts(json.data);
       })
-      .catch((err) => {
-        console.error("Erro ao buscar produtos:", err);
-        setLoading(false);
-      });
+      .catch((err) => console.error("Erro ao buscar produtos:", err));
   }, []);
 
   const favoritarProduto = async (produtoId: number) => {
@@ -51,111 +44,61 @@ const ProductCatalog: React.FC = () => {
     }
 
     try {
-      // Verifica se o produto já está favoritado
-      const isFavorited = favoritedIds.includes(produtoId);
-
-      if (isFavorited) {
-        // Se já estiver favoritado, remove do Strapi
-        const res = await fetch(`${API_URL}/api/favoritos/${produtoId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
+      const res = await fetch(`${API_URL}/api/favoritos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          data: {
+            produto: produtoId,
           },
-        });
+        }),
+      });
 
-        if (!res.ok) throw new Error("Erro ao remover favorito");
+      if (!res.ok) throw new Error("Erro ao favoritar");
 
-        // Remove do estado local
-        setFavoritedIds((prev) => prev.filter((id) => id !== produtoId));
-      } else {
-        // Se não estiver favoritado, adiciona ao Strapi
-        const res = await fetch(`${API_URL}/api/favoritos`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            data: {
-              produto: produtoId,
-            },
-          }),
-        });
-
-        if (!res.ok) throw new Error("Erro ao favoritar");
-
-        // Atualiza o estado local
-        setFavoritedIds((prev) => [...prev, produtoId]);
-      }
+      // Atualiza visualmente o estado
+      setFavoritedIds((prev) => [...prev, produtoId]);
     } catch (err) {
-      console.error("Erro ao favoritar:", err);
+      console.error(err);
     }
   };
 
-  const renderDescricao = (descricao: DescricaoBlock[]) => {
-    return descricao.map((block, i) => {
-      if (block.type === "paragraph") {
-        return (
-          <p key={i}>
-            {block.children.map((child, j) => (
-              <span key={j}>{child.text}</span>
-            ))}
-          </p>
-        );
-      }
-      return null;
-    });
-  };
-
-  if (loading) return <p>Carregando produtos...</p>;
-
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Catálogo de Produtos</h1>
-      {produtos.map((produto) => {
-        const { Nome, Preco, Descricao, Imagem } = produto.attributes;
-        const imagemUrl = Imagem?.data?.attributes?.url
-          ? `${API_URL}${Imagem.data.attributes.url}`
-          : null;
-
-        const isFavorited = favoritedIds.includes(produto.id);
+    <div className="catalog-simple">
+      {products.map((product) => {
+        const imagem = product.Imagem?.[0];
+        const imageUrl =
+          API_URL + (imagem?.formats?.thumbnail?.url || imagem?.url);
+        const isFavorited = favoritedIds.includes(product.id);
 
         return (
-          <div
-            key={produto.id}
-            style={{
-              borderBottom: "1px solid #ccc",
-              marginBottom: "2rem",
-              paddingBottom: "1rem",
-              position: "relative",
-            }}
-          >
-            <span
-              onClick={() => favoritarProduto(produto.id)}
-              style={{
-                position: "absolute",
-                top: 10,
-                right: 10,
-                fontSize: "24px",
-                cursor: "pointer",
-                color: isFavorited ? "red" : "#ccc",
-              }}
-              title={isFavorited ? "Remover dos favoritos" : "Favoritar"}
+          <div key={product.id} className="card-simple">
+            <div className="card-header">
+              <span className="discount">-10%</span>
+              <span
+                className={`heart ${isFavorited ? "favorited" : ""}`}
+                onClick={() => favoritarProduto(product.id)}
+                style={{ cursor: "pointer" }}
+              >
+                ♥
+              </span>
+            </div>
+            <img src={imageUrl} alt={product.Nome} className="product-image" />
+            <div className="product-title">{product.Nome}</div>
+            <div className="product-footer">
+              <span className="price">R$ {product.Preco.toFixed(2)}</span>
+              <span className="rating">4.5 ⭐</span>
+            </div>
+
+            <button
+              className="add-to-cart-btn"
+              onClick={() => addToCart(product)} // Chama addToCart ao clicar
             >
-              ♥
-            </span>
-            {imagemUrl && (
-              <img
-                src={imagemUrl}
-                alt={Nome}
-                style={{ width: "200px", height: "200px", objectFit: "cover" }}
-              />
-            )}
-            <h2>{Nome}</h2>
-            <p>
-              <strong>Preço:</strong> R$ {Preco}
-            </p>
-            {renderDescricao(Descricao)}
+              Adicionar
+            </button>
           </div>
         );
       })}
@@ -163,4 +106,4 @@ const ProductCatalog: React.FC = () => {
   );
 };
 
-export default ProductCatalog;
+export default CatalogPrimary;

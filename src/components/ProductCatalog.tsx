@@ -17,39 +17,25 @@ type Produto = {
   }[];
 };
 
-type ProductsProps = {
-  addToCart: (product: Produto) => void;
+type Props = {
+  addToCart: (produto: Produto) => void; // Recebe a função addToCart como prop
 };
 
-const CatalogPrimary: React.FC<ProductsProps> = ({ addToCart }) => {
+const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
   const [products, setProducts] = useState<Produto[]>([]);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(1);
-
   const token = localStorage.getItem("jwt");
 
-  const fetchProducts = async (pageNumber: number) => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `${API_URL}/api/produtos?populate=*&pagination[page]=${pageNumber}&pagination[pageSize]=6`
-      );
-      const json = await res.json();
-      setProducts((prev) => [...prev, ...json.data]);
-      setError(null);
-    } catch (err) {
-      setError("Erro ao buscar produtos. Tente novamente mais tarde.");
-      console.error("Erro ao buscar produtos:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchProducts(page);
-  }, [page]);
+    fetch(
+      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=2`
+    )
+      .then((res) => res.json())
+      .then((json) => {
+        setProducts(json.data);
+      })
+      .catch((err) => console.error("Erro ao buscar produtos:", err));
+  }, []);
 
   const favoritarProduto = async (produtoId: number) => {
     if (!token) {
@@ -73,13 +59,8 @@ const CatalogPrimary: React.FC<ProductsProps> = ({ addToCart }) => {
 
       if (!res.ok) throw new Error("Erro ao favoritar");
 
-      setFavoritedIds((prev) =>
-        prev.includes(produtoId)
-          ? prev.filter((id) => id !== produtoId)
-          : [...prev, produtoId]
-      );
-
-      alert("Adicionado aos Favoritos");
+      // Atualiza visualmente o estado
+      setFavoritedIds((prev) => [...prev, produtoId]);
     } catch (err) {
       console.error(err);
     }
@@ -87,14 +68,10 @@ const CatalogPrimary: React.FC<ProductsProps> = ({ addToCart }) => {
 
   return (
     <div className="catalog-simple">
-      {loading && <div>Carregando...</div>}
-      {error && <div>{error}</div>}
-
       {products.map((product) => {
         const imagem = product.Imagem?.[0];
         const imageUrl =
           API_URL + (imagem?.formats?.thumbnail?.url || imagem?.url);
-
         const isFavorited = favoritedIds.includes(product.id);
 
         return (
@@ -109,7 +86,6 @@ const CatalogPrimary: React.FC<ProductsProps> = ({ addToCart }) => {
                 ♥
               </span>
             </div>
-
             <img src={imageUrl} alt={product.Nome} className="product-image" />
             <div className="product-title">{product.Nome}</div>
             <div className="product-footer">
@@ -119,17 +95,13 @@ const CatalogPrimary: React.FC<ProductsProps> = ({ addToCart }) => {
 
             <button
               className="add-to-cart-btn"
-              onClick={() => addToCart(product)}
+              onClick={() => addToCart(product)} // Chama addToCart ao clicar
             >
-              Adicionar ao Carrinho
+              Adicionar
             </button>
           </div>
         );
       })}
-
-      <button onClick={() => setPage((prev) => prev + 1)} disabled={loading}>
-        {loading ? "Carregando..." : "Carregar Mais"}
-      </button>
     </div>
   );
 };
