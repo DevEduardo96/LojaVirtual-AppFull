@@ -133,8 +133,20 @@ const App: React.FC = () => {
                 path="/home"
                 render={() => <Home onCartClick={() => setCartOpen(true)} />}
               />
-              <Route exact path="/products" component={Products} />
-              <Route exact path="/favorites" component={Favorites} />
+              <Route
+                exact
+                path="/products"
+                render={() => (
+                  <Products onCartClick={() => setCartOpen(true)} />
+                )}
+              />
+              <Route
+                exact
+                path="/Favorites"
+                render={() => (
+                  <Favorites onCartClick={() => setCartOpen(true)} />
+                )}
+              />
               <Route exact path="/profile" component={Profile} />
               <Route exact path="/">
                 <Redirect to="/home" />
@@ -153,7 +165,7 @@ const App: React.FC = () => {
                 className="tab-button"
               >
                 <IonIcon icon={cart} />
-                <IonLabel className="tab-label">Carrinho</IonLabel>
+                <IonLabel className="tab-label">Produtos</IonLabel>
               </IonTabButton>
 
               <IonTabButton

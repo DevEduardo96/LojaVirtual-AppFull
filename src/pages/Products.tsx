@@ -8,19 +8,17 @@ import {
   IonSearchbar,
 } from "@ionic/react";
 
-import { useCart } from "../context/CartContext"; // ajuste o caminho conforme seu projeto
+import { useCart } from "../context/CartContext"; // ajuste o caminho se necessário
 
 import "./css/Home.css";
 import Cart from "../components/ExploreContainer";
-import CategoryCatalog from "../components/CategoryCatalog";
-import CatalogPrimary from "../components/CatalogPrimary";
 import ListaProdutos from "../components/ListaProdutos";
 
-interface HomeProps {
+interface ProductsProps {
   onCartClick: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ onCartClick }) => {
+const Products: React.FC<ProductsProps> = ({ onCartClick }) => {
   const { addToCart } = useCart();
 
   return (
@@ -38,11 +36,12 @@ const Home: React.FC<HomeProps> = ({ onCartClick }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <CategoryCatalog />
         <ListaProdutos addToCart={addToCart} />
       </IonContent>
     </IonPage>
   );
 };
 
-export default Home;
+export default Products;
+
+// Esses Produtos estão sendo importados de ListaProdutos.tsx

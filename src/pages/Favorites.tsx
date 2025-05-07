@@ -3,31 +3,45 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonSearchbar,
   IonTitle,
   IonToolbar,
+  IonSearchbar,
 } from "@ionic/react";
+
+import { useCart } from "../context/CartContext"; // ajuste o caminho conforme seu projeto
 
 import "./css/Home.css";
 import Cart from "../components/ExploreContainer";
+import Slider from "../components/Slider";
+import CategoryCatalog from "../components/CategoryCatalog";
+import CatalogPrimary from "../components/CatalogPrimary";
 
-const Favorites: React.FC = () => {
+interface HomeProps {
+  onCartClick: () => void;
+}
+
+const Home: React.FC<HomeProps> = ({ onCartClick }) => {
+  const { addToCart } = useCart();
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color="dark" className="barra-superior">
           <h1 className="txbarra-superior">barra superior</h1>
         </IonToolbar>
-        <IonToolbar className="titulos">
-          <IonTitle className="titulos">
-            <Cart />
+
+        <IonToolbar className="ion-toolbar">
+          <IonTitle className="titulo">
+            <Cart onCartClick={onCartClick} />
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
           </IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen></IonContent>
+      <IonContent fullscreen>
+        <h1>conteudo</h1>
+      </IonContent>
     </IonPage>
   );
 };
 
-export default Favorites;
+export default Home;
