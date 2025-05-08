@@ -1,10 +1,10 @@
 import "../components/css/CategoryCatalog.css";
 
 const categories = [
-  { title: "", image: "/resources/img/woman-clothes.png" },
-  { title: "", image: "/resources/img/grocery.png" },
-  { title: "", image: "/resources/img/shampoo.png" },
   { title: "", image: "/resources/img/rowboat.png" },
+  { title: "", image: "/resources/img/fones-de-ouvido.png" },
+  { title: "", image: "/resources/img/guarda-roupa.png" },
+  { title: "", image: "/resources/img/price-tag.png" },
 ];
 
 const CategoryCatalog = () => {

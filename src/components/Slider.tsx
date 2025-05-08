@@ -3,19 +3,19 @@ import "./css/Slider.css";
 
 const slides = [
   {
-    title: "Amazon Echo",
-    subtitle: "3rd Generation, Charcoal",
+    title: "Os Melhores Preços",
+    subtitle: "Voce só encontra aqui!!!",
     image: "/resources/img/mulher_no_bg.png",
   },
   {
     title: "Smart Watch",
     subtitle: "Series 6, Apple",
-    image: "/resources/img/mulher_no_bg.png",
+    image: "/resources/img/relogio.png",
   },
   {
-    title: "Bluetooth Speaker",
+    title: "Headset Gamer TGT Diver",
     subtitle: "Portable & Loud",
-    image: "/resources/img/mulher_no_bg.png",
+    image: "/resources/img/baby-products.png",
   },
 ];
 
@@ -39,7 +39,7 @@ const Slider = () => {
           <div className="text">
             <h2>{slide.title}</h2>
             <p>{slide.subtitle}</p>
-            <button>Buy Now</button>
+            <button>Comprar Agora</button>
           </div>
           <img src={slide.image} alt={slide.title} />
         </div>

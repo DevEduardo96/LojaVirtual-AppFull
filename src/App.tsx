@@ -39,7 +39,7 @@ import "./App.css";
 
 import { CartProvider, useCart } from "./context/CartContext";
 
-const API_URL = "http://localhost:1337";
+const API_URL = "https://backend-app-vs0e.onrender.com";
 
 type Produto = {
   id: number;
@@ -77,11 +77,24 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       handleBehavior="cycle"
     >
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar
+          style={{
+            "--background": "black",
+            "--color": "white",
+          }}
+        >
           <IonTitle>
             <h1>Carrinho de Compras</h1>
           </IonTitle>
-          <IonButton className="btn-fechar" slot="end" onClick={onClose}>
+          <IonButton
+            className="btn-fechar"
+            slot="end"
+            onClick={onClose}
+            style={{
+              "--background": "#c3ff30",
+              "--color": "black",
+            }}
+          >
             Fechar
           </IonButton>
         </IonToolbar>
@@ -120,7 +133,9 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             ))
           ) : (
             <IonItem>
-              <IonLabel>Seu carrinho está vazio.</IonLabel>
+              <IonLabel>
+                <p>O Carrinho está vazio</p>
+              </IonLabel>
             </IonItem>
           )}
         </IonList>

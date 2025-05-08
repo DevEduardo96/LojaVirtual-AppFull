@@ -121,3 +121,8 @@
 .btn-cart[data-count="0"]::before {
   display: none !important;
 }
+
+/* Logo*/
+.logo {
+  width: 100px;
+}

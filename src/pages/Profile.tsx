@@ -15,7 +15,7 @@ const Profile: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="dark" className="barra-superior">
-          <h1 className="txbarra-superior">barra superior</h1>
+          <h1 className="txbarra-superior"></h1>
         </IonToolbar>
         <IonToolbar></IonToolbar>
       </IonHeader>

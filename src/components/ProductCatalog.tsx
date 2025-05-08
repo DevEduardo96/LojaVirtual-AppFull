@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./css/CatalogPrimary.css";
 
-const API_URL = "http://localhost:1337";
+const API_URL = "https://backend-app-vs0e.onrender.com";
 
 type Produto = {
   id: number;

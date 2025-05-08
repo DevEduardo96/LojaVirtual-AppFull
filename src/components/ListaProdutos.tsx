@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./css/CatalogPrimary.css";
 
-const API_URL = "http://localhost:1337";
+const API_URL = "https://backend-app-vs0e.onrender.com";
 
 type Produto = {
   id: number;
@@ -28,7 +28,7 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
   useEffect(() => {
     fetch(
-      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=5`
+      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=6`
     )
       .then((res) => res.json())
       .then((json) => {

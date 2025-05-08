@@ -12,9 +12,6 @@ import { useCart } from "../context/CartContext"; // ajuste o caminho conforme s
 
 import "./css/Home.css";
 import Cart from "../components/ExploreContainer";
-import Slider from "../components/Slider";
-import CategoryCatalog from "../components/CategoryCatalog";
-import CatalogPrimary from "../components/CatalogPrimary";
 
 interface HomeProps {
   onCartClick: () => void;
@@ -27,7 +24,7 @@ const Home: React.FC<HomeProps> = ({ onCartClick }) => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="dark" className="barra-superior">
-          <h1 className="txbarra-superior">barra superior</h1>
+          <h1 className="txbarra-superior"></h1>
         </IonToolbar>
 
         <IonToolbar className="ion-toolbar">

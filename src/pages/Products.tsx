@@ -25,7 +25,7 @@ const Products: React.FC<ProductsProps> = ({ onCartClick }) => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="dark" className="barra-superior">
-          <h1 className="txbarra-superior">barra superior</h1>
+          <h1 className="txbarra-superior"></h1>
         </IonToolbar>
 
         <IonToolbar className="ion-toolbar">
