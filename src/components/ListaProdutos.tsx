@@ -24,6 +24,7 @@ type Props = {
 const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
   const [products, setProducts] = useState<Produto[]>([]);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const token = localStorage.getItem("jwt");
 
   useEffect(() => {
@@ -68,6 +69,11 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
   return (
     <div className="catalog-simple">
+      {alertMessage && (
+        <div className="alert-overlay" onClick={() => setAlertMessage(null)}>
+          <div className="alert-box">{alertMessage}</div>
+        </div>
+      )}
       {products.map((product) => {
         const imagem = product.Imagem?.[0];
         const imageUrl =
@@ -95,7 +101,10 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
             <button
               className="add-to-cart-btn"
-              onClick={() => addToCart(product)} // Chama addToCart ao clicar
+              onClick={() => {
+                addToCart(product);
+                setAlertMessage(`${product.Nome} adicionado ao carrinho!`);
+              }}
             >
               Adicionar
             </button>

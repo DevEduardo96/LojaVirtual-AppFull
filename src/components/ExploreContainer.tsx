@@ -25,7 +25,7 @@ const Cart: React.FC<CartProps> = ({ onCartClick }) => {
   return (
     <div className="top-nav">
       <div className="logo">
-        <img src="./resources/logonew.png" alt="logo" />
+        <img src="/logonew.png" alt="logo" />
       </div>
       <a
         href="#"

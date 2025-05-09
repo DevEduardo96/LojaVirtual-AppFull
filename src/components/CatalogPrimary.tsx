@@ -18,17 +18,18 @@ type Produto = {
 };
 
 type Props = {
-  addToCart: (produto: Produto) => void; // Recebe a função addToCart como prop
+  addToCart: (produto: Produto) => void;
 };
 
 const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
   const [products, setProducts] = useState<Produto[]>([]);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const token = localStorage.getItem("jwt");
 
   useEffect(() => {
     fetch(
-      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=2`
+      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=6`
     )
       .then((res) => res.json())
       .then((json) => {
@@ -39,7 +40,7 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
   const favoritarProduto = async (produtoId: number) => {
     if (!token) {
-      alert("Você precisa estar logado para favoritar.");
+      setAlertMessage("Você precisa estar logado para favoritar.");
       return;
     }
 
@@ -59,7 +60,6 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
       if (!res.ok) throw new Error("Erro ao favoritar");
 
-      // Atualiza visualmente o estado
       setFavoritedIds((prev) => [...prev, produtoId]);
     } catch (err) {
       console.error(err);
@@ -68,6 +68,12 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
   return (
     <div className="catalog-simple">
+      {alertMessage && (
+        <div className="alert-overlay" onClick={() => setAlertMessage(null)}>
+          <div className="alert-box">{alertMessage}</div>
+        </div>
+      )}
+
       {products.map((product) => {
         const imagem = product.Imagem?.[0];
         const imageUrl =
@@ -95,7 +101,10 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
             <button
               className="add-to-cart-btn"
-              onClick={() => addToCart(product)} // Chama addToCart ao clicar
+              onClick={() => {
+                addToCart(product);
+                setAlertMessage(`${product.Nome} adicionado ao carrinho!`);
+              }}
             >
               Adicionar
             </button>

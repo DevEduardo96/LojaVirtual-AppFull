@@ -5,17 +5,17 @@ const slides = [
   {
     title: "Os Melhores Preços",
     subtitle: "Voce só encontra aqui!!!",
-    image: "/resources/img/mulher_no_bg.png",
+    image: "/img/mulher_no_bg.png",
   },
   {
     title: "Smart Watch",
     subtitle: "Series 6, Apple",
-    image: "/resources/img/relogio.png",
+    image: "/img/relogio.png",
   },
   {
     title: "Headset Gamer TGT Diver",
     subtitle: "Portable & Loud",
-    image: "/resources/img/baby-products.png",
+    image: "/img/baby-products.png",
   },
 ];
 
