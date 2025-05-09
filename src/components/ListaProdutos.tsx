@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./css/CatalogPrimary.css";
+import "./css/ListaProdutos.css";
 
 const API_URL = "https://backend-app-vs0e.onrender.com";
 
@@ -68,7 +68,7 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
   };
 
   return (
-    <div className="catalog-simple">
+    <div className="c-simple">
       {alertMessage && (
         <div className="alert-overlay" onClick={() => setAlertMessage(null)}>
           <div className="alert-box">{alertMessage}</div>
@@ -81,7 +81,7 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
         const isFavorited = favoritedIds.includes(product.id);
 
         return (
-          <div key={product.id} className="card-simple">
+          <div key={product.id} className="cd-simple">
             <div className="card-header">
               <span className="discount">-10%</span>
               <span

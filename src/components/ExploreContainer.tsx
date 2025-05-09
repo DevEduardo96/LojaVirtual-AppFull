@@ -15,7 +15,6 @@ const Cart: React.FC<CartProps> = ({ onCartClick }) => {
     0
   );
 
-  // Atualiza dinamicamente o atributo data-count com JS
   useEffect(() => {
     if (cartRef.current) {
       cartRef.current.setAttribute("data-count", String(totalQuantity));
@@ -27,6 +26,12 @@ const Cart: React.FC<CartProps> = ({ onCartClick }) => {
       <div className="logo">
         <img src="/logonew.png" alt="logo" />
       </div>
+      {/* Ícone do usuário */}
+      <a href="#" className="btn-user">
+        <i className="ri-heart-3-line"></i>
+      </a>
+
+      {/* Ícone do carrinho */}
       <a
         href="#"
         className="btn-cart"

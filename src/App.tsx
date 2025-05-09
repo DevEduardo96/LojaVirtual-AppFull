@@ -19,7 +19,7 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route, Redirect } from "react-router-dom";
-import { home, cart, heart, person } from "ionicons/icons";
+import { home, cart, heart, person, notifications } from "ionicons/icons";
 
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/normalize.css";
@@ -32,7 +32,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
-import Favorites from "./pages/Favorites";
+import Favorites from "./pages/Notificacao";
 import Profile from "./pages/Profile";
 
 import "./App.css";
@@ -205,7 +205,7 @@ const App: React.FC = () => {
                 className="tab-button"
               >
                 <IonIcon icon={cart} />
-                <IonLabel className="tab-label">Produtos</IonLabel>
+                <IonLabel className="tab-label">Catalogos</IonLabel>
               </IonTabButton>
 
               <IonTabButton
@@ -213,8 +213,9 @@ const App: React.FC = () => {
                 href="/favorites"
                 className="tab-button"
               >
-                <IonIcon icon={heart} />
-                <IonLabel className="tab-label">Favoritos</IonLabel>
+                <IonIcon icon={notifications} />
+                <div className="notification-badge"></div>
+                <IonLabel className="tab-label">Notificações</IonLabel>
               </IonTabButton>
 
               <IonTabButton

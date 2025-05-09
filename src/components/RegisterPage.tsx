@@ -22,24 +22,22 @@ const RegisterPage: React.FC = () => {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let formIsValid = true;
     let newErrors = { email: "", password: "", confirmPassword: "" };
 
-    // Validar e-mail
+    // Validação
     if (!validateEmail(form.email)) {
       newErrors.email = "Por favor, insira um e-mail válido.";
       formIsValid = false;
     }
 
-    // Validar senha
     if (!validatePassword(form.password)) {
       newErrors.password = "A senha deve ter pelo menos 6 caracteres.";
       formIsValid = false;
     }
 
-    // Validar confirmação de senha
     if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = "As senhas não coincidem.";
       formIsValid = false;
@@ -47,13 +45,58 @@ const RegisterPage: React.FC = () => {
 
     setErrors(newErrors);
 
-    if (formIsValid) {
-      alert("Cadastro bem-sucedido!");
+    if (!formIsValid) return;
+
+    // Enviar dados para o Strapi
+    try {
+      const response = await fetch(
+        "https://backend-app-vs0e.onrender.com/api/auth/local/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: form.email, // ou outro campo se quiser um username diferente
+            email: form.email,
+            password: form.password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Cadastro bem-sucedido!");
+        console.log("Token JWT:", data.jwt);
+        // Você pode armazenar o JWT aqui se quiser autenticação contínua
+        // localStorage.setItem("token", data.jwt);
+      } else {
+        alert(data.error?.message || "Erro ao registrar usuário.");
+      }
+    } catch (error) {
+      console.error("Erro:", error);
+      alert("Erro de conexão com o servidor.");
     }
   };
 
   return (
     <div className="container">
+      {/* Texto de políticas de privacidade */}
+      <div className="privacy-text">
+        <p>
+          Ao se registrar, você concorda com nossa{" "}
+          <a
+            href="https://www.seusite.com/politica-de-privacidade"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Política de Privacidade
+          </a>
+          .
+        </p>
+      </div>
+
       <form className="form" onSubmit={handleSubmit}>
         <h2>Registrar</h2>
 

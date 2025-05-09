@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./css/CatalogPrimary.css";
+import "./css/CatalogoPrimary.css";
 
 const API_URL = "https://backend-app-vs0e.onrender.com";
 

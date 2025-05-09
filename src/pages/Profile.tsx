@@ -17,11 +17,14 @@ const Profile: React.FC = () => {
         <IonToolbar color="dark" className="barra-superior">
           <h1 className="txbarra-superior"></h1>
         </IonToolbar>
-        <IonToolbar></IonToolbar>
+        <IonToolbar>
+          <div className="logo">
+            <img src="/logonew.png" alt="logo" />
+          </div>
+        </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <div className="p-4">
-          {" "}
           <RegisterPage />
         </div>
       </IonContent>

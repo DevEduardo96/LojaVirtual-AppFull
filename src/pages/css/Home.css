@@ -27,3 +27,41 @@
   text-align: center;
   margin-top: 1px;
 }
+
+/*Logo */
+.logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 200px; /* Não ultrapassa 200px, mas pode encolher em telas menores */
+  height: auto; /* Mantém proporção da imagem */
+}
+
+@media (max-width: 768px) {
+  .logo {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    max-width: 120px;
+  }
+}
+
+/* Icone de localização em Home*/
+.localizacao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #555;
+  padding: 0 16px;
+  margin-top: 4px;
+}
+
+.localizacao i {
+  font-size: 18px;
+  color: #e74c3c;
+}

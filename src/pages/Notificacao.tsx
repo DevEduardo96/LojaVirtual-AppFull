@@ -35,7 +35,7 @@ const Home: React.FC<HomeProps> = ({ onCartClick }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <h1>conteudo</h1>
+        <h1>Notificações apareceram aqui</h1>
       </IonContent>
     </IonPage>
   );
