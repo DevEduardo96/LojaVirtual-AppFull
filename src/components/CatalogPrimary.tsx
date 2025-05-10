@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { supabase } from "../services/supabaseClient";
 import "./css/CatalogoPrimary.css";
-
-const API_URL = "https://backend-app-vs0e.onrender.com";
 
 type Produto = {
   id: number;
-  Nome: string;
-  Preco: number;
-  Imagem: {
-    url: string;
-    formats?: {
-      thumbnail?: {
-        url: string;
-      };
-    };
-  }[];
+  nome: string;
+  preco: number;
+  imagem: string; // URL direta armazenada no Supabase
 };
 
 type Props = {
@@ -28,14 +20,20 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
   const token = localStorage.getItem("jwt");
 
   useEffect(() => {
-    fetch(
-      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=6`
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        setProducts(json.data);
-      })
-      .catch((err) => console.error("Erro ao buscar produtos:", err));
+    const fetchProdutos = async () => {
+      const { data, error } = await supabase
+        .from("produtos")
+        .select("*")
+        .eq("ativo", true);
+
+      if (error) {
+        console.error("Erro ao buscar produtos:", error);
+      } else {
+        setProducts(data || []);
+      }
+    };
+
+    fetchProdutos();
   }, []);
 
   const favoritarProduto = async (produtoId: number) => {
@@ -45,24 +43,16 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
     }
 
     try {
-      const res = await fetch(`${API_URL}/api/favoritos`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          data: {
-            produto: produtoId,
-          },
-        }),
+      const { error } = await supabase.from("favoritos").insert({
+        usuario_token: token,
+        produto_id: produtoId,
       });
 
-      if (!res.ok) throw new Error("Erro ao favoritar");
+      if (error) throw error;
 
       setFavoritedIds((prev) => [...prev, produtoId]);
     } catch (err) {
-      console.error(err);
+      console.error("Erro ao favoritar:", err);
     }
   };
 
@@ -75,10 +65,10 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
       )}
 
       {products.map((product) => {
-        const imagem = product.Imagem?.[0];
-        const imageUrl =
-          API_URL + (imagem?.formats?.thumbnail?.url || imagem?.url);
         const isFavorited = favoritedIds.includes(product.id);
+        const imageUrl = product.imagem?.startsWith("http")
+          ? product.imagem
+          : "https://via.placeholder.com/150?text=Sem+imagem";
 
         return (
           <div key={product.id} className="card-simple">
@@ -92,18 +82,31 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
                 ♥
               </span>
             </div>
-            <img src={imageUrl} alt={product.Nome} className="product-image" />
-            <div className="product-title">{product.Nome}</div>
+            <img
+              src={imageUrl}
+              alt={product.nome}
+              className="product-image"
+              onError={(e) =>
+                (e.currentTarget.src =
+                  "https://via.placeholder.com/150?text=Imagem+indisponível")
+              }
+            />
+            <div className="product-title">{product.nome}</div>
             <div className="product-footer">
-              <span className="price">R$ {product.Preco.toFixed(2)}</span>
+              <span className="price">R$ {product.preco.toFixed(2)}</span>
               <span className="rating">4.5 ⭐</span>
             </div>
 
             <button
               className="add-to-cart-btn"
               onClick={() => {
-                addToCart(product);
-                setAlertMessage(`${product.Nome} adicionado ao carrinho!`);
+                addToCart({
+                  id: product.id,
+                  Nome: product.nome,
+                  Preco: product.preco,
+                  Imagem: [{ url: product.imagem }], // Adaptação ao antigo formato
+                } as any); // usar "as any" para forçar o tipo, ou declare dois tipos diferentes
+                setAlertMessage(`${product.nome} adicionado ao carrinho!`);
               }}
             >
               Adicionar

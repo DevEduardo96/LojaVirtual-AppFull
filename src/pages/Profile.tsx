@@ -18,9 +18,16 @@ const Profile: React.FC = () => {
           <h1 className="txbarra-superior"></h1>
         </IonToolbar>
         <IonToolbar>
-          <div className="logo">
-            <img src="/logonew.png" alt="logo" />
+          <div className="logo-user">
+            <div className="logo">
+              <img src="/logonew.png" alt="logo" />
+            </div>
+            <div className="localizacao">
+              <i className="ri-map-pin-2-fill"></i>
+              <span>Rua zero, 123 - Centro, Cidade </span>
+            </div>
           </div>
+          <h2 className="categoriaspro">faça o seu cadastro</h2>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

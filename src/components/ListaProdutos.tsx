@@ -1,70 +1,43 @@
 import React, { useEffect, useState } from "react";
+import { supabase } from "../services/supabaseClient";
 import "./css/ListaProdutos.css";
 
-const API_URL = "https://backend-app-vs0e.onrender.com";
-
 type Produto = {
-  id: number;
-  Nome: string;
-  Preco: number;
-  Imagem: {
-    url: string;
-    formats?: {
-      thumbnail?: {
-        url: string;
-      };
-    };
-  }[];
+  id: number; // corrigido: tipo numérico (padrão Supabase)
+  nome: string;
+  preco: number;
+  imagem: string; // URL direta da imagem
 };
 
 type Props = {
-  addToCart: (produto: Produto) => void; // Recebe a função addToCart como prop
+  addToCart: (produto: Produto) => void;
 };
 
 const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
   const [products, setProducts] = useState<Produto[]>([]);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const token = localStorage.getItem("jwt");
 
   useEffect(() => {
-    fetch(
-      `${API_URL}/api/produtos?populate=*&pagination[page]=1&pagination[pageSize]=6`
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        setProducts(json.data);
-      })
-      .catch((err) => console.error("Erro ao buscar produtos:", err));
+    const fetchProdutos = async () => {
+      const { data, error } = await supabase
+        .from("produtos")
+        .select("*")
+        .eq("ativo", true);
+
+      if (error) {
+        console.error("Erro ao buscar produtos:", error);
+      } else if (data) {
+        setProducts(data);
+      }
+    };
+
+    fetchProdutos();
   }, []);
 
-  const favoritarProduto = async (produtoId: number) => {
-    if (!token) {
-      alert("Você precisa estar logado para favoritar.");
-      return;
-    }
-
-    try {
-      const res = await fetch(`${API_URL}/api/favoritos`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          data: {
-            produto: produtoId,
-          },
-        }),
-      });
-
-      if (!res.ok) throw new Error("Erro ao favoritar");
-
-      // Atualiza visualmente o estado
-      setFavoritedIds((prev) => [...prev, produtoId]);
-    } catch (err) {
-      console.error(err);
-    }
+  const favoritarProduto = (produtoId: number) => {
+    alert("Favoritos ainda não implementados no Supabase.");
+    // Aqui futuramente você pode usar Supabase Auth + tabela favoritos
   };
 
   return (
@@ -75,9 +48,6 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
         </div>
       )}
       {products.map((product) => {
-        const imagem = product.Imagem?.[0];
-        const imageUrl =
-          API_URL + (imagem?.formats?.thumbnail?.url || imagem?.url);
         const isFavorited = favoritedIds.includes(product.id);
 
         return (
@@ -92,18 +62,31 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
                 ♥
               </span>
             </div>
-            <img src={imageUrl} alt={product.Nome} className="product-image" />
-            <div className="product-title">{product.Nome}</div>
+            <img
+              src={product.imagem}
+              alt={product.nome}
+              className="product-image"
+              onError={(e) =>
+                (e.currentTarget.src =
+                  "https://via.placeholder.com/150?text=Imagem+Indisponível")
+              }
+            />
+            <div className="product-title">{product.nome}</div>
             <div className="product-footer">
-              <span className="price">R$ {product.Preco.toFixed(2)}</span>
+              <span className="price">R$ {product.preco.toFixed(2)}</span>
               <span className="rating">4.5 ⭐</span>
             </div>
 
             <button
               className="add-to-cart-btn"
               onClick={() => {
-                addToCart(product);
-                setAlertMessage(`${product.Nome} adicionado ao carrinho!`);
+                addToCart({
+                  id: product.id,
+                  Nome: product.nome,
+                  Preco: product.preco,
+                  Imagem: [{ url: product.imagem }], // Adaptação ao antigo formato
+                } as any); // usar "as any" para forçar o tipo, ou declare dois tipos diferentes
+                setAlertMessage(`${product.nome} adicionado ao carrinho!`);
               }}
             >
               Adicionar

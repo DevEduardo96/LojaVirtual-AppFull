@@ -16,7 +16,6 @@
   background-color: rgb(172, 170, 170);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
 }
@@ -63,7 +62,9 @@
   font-size: 16px;
   cursor: pointer;
 }
-
+input {
+  background-color: white;
+}
 .submit-button:hover {
   background-color: #a3dd10;
   color: black;

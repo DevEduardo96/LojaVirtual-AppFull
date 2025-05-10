@@ -30,7 +30,7 @@ const Home: React.FC<HomeProps> = ({ onCartClick }) => {
         <IonToolbar className="ion-toolbar">
           <IonTitle className="titulo">
             <Cart onCartClick={onCartClick} />
-            <IonSearchbar className="busca" placeholder="Digite sua busca..." />
+            <h2 className="categoriaspro">Notificações</h2>
           </IonTitle>
         </IonToolbar>
       </IonHeader>

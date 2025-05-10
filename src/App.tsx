@@ -39,23 +39,15 @@ import "./App.css";
 
 import { CartProvider, useCart } from "./context/CartContext";
 
-const API_URL = "https://backend-app-vs0e.onrender.com";
+setupIonicReact();
 
+// Agora o Produto reflete os dados do Supabase
 type Produto = {
   id: number;
   Nome: string;
   Preco: number;
-  Imagem: {
-    url: string;
-    formats?: {
-      thumbnail?: {
-        url: string;
-      };
-    };
-  }[];
+  Imagem: { url: string }[]; // adaptado para manter compatibilidade
 };
-
-setupIonicReact();
 
 const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
@@ -105,7 +97,7 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             cartItems.map((item) => (
               <IonItem key={item.id}>
                 <img
-                  src={`${API_URL}${item.Imagem[0]?.url}`}
+                  src={item.Imagem[0]?.url || "https://via.placeholder.com/60"}
                   alt={item.Nome}
                   style={{
                     width: 60,
@@ -114,6 +106,10 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     marginRight: 10,
                     borderRadius: 8,
                   }}
+                  onError={(e) =>
+                    (e.currentTarget.src =
+                      "https://via.placeholder.com/60?text=Erro")
+                  }
                 />
                 <IonLabel className="ion-text-wrap">
                   <h2>{item.Nome}</h2>
@@ -205,7 +201,7 @@ const App: React.FC = () => {
                 className="tab-button"
               >
                 <IonIcon icon={cart} />
-                <IonLabel className="tab-label">Catalogos</IonLabel>
+                <IonLabel className="tab-label">Catálogos</IonLabel>
               </IonTabButton>
 
               <IonTabButton

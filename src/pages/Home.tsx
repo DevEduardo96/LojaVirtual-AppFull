@@ -35,8 +35,8 @@ const Home: React.FC<HomeProps> = ({ onCartClick }) => {
             <Cart onCartClick={onCartClick} />
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
             <div className="localizacao">
-              <i className="ri-map-pin-2-fill"></i>
-              <span>Rua zero, 123 - Centro, Cidade </span>
+              <i className="ri-map-pin-line"></i>
+              <span>Rua Fictícia, 123 - Centro, Cidade Exemplo</span>
             </div>
           </IonTitle>
         </IonToolbar>

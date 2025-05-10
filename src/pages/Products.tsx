@@ -32,6 +32,10 @@ const Products: React.FC<ProductsProps> = ({ onCartClick }) => {
           <IonTitle className="titulo">
             <Cart onCartClick={onCartClick} />
             <IonSearchbar className="busca" placeholder="Digite sua busca..." />
+            <div className="localizacao">
+              <i className="ri-map-pin-2-fill"></i>
+              <span>Rua zero, 123 - Centro, Cidade </span>
+            </div>
           </IonTitle>
         </IonToolbar>
       </IonHeader>
