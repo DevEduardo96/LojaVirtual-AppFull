@@ -10,6 +10,7 @@
   flex-wrap: wrap; /* Permite que os itens quebrem para a linha seguinte */
   gap: 20px;
   padding: 20px;
+  width: 100%; /* Garante que ocupe a largura total disponível */
   justify-content: space-between; /* Distribui os itens igualmente */
 }
 
@@ -18,7 +19,7 @@
   border-radius: 16px;
   padding: 12px;
   width: calc(
-    50% - 20px
+    50% - 10px
   ); /* Cada card ocupa metade da largura do container, menos o espaço do gap */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;

@@ -11,12 +11,20 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useCart } from "../context/CartContext";
+import "./css/CartModel.css";
 
 const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
 }) => {
-  const { cartItems, removeFromCart, saveCartToSupabase } = useCart();
+  const {
+    cartItems,
+    incrementQuantity,
+    decrementQuantity,
+    clearCart,
+    saveCartToSupabase,
+  } = useCart();
+
   const [loading, setLoading] = useState(false);
 
   const totalGeral = cartItems.reduce(
@@ -67,9 +75,6 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         <IonList>
           {cartItems.length > 0 ? (
             cartItems.map((item) => {
-              console.log("Item no carrinho:", item);
-
-              // ✅ Corrigido para aceitar array ou string
               const imagemUrl = Array.isArray(item.Imagem)
                 ? item.Imagem[0]?.url?.startsWith("http")
                   ? item.Imagem[0].url
@@ -103,13 +108,31 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     </p>
                     <p>Total: R$ {(item.Preco * item.quantidade).toFixed(2)}</p>
                   </IonLabel>
-                  <IonButton
-                    color="danger"
-                    slot="end"
-                    onClick={() => removeFromCart(item.id)}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginLeft: "auto",
+                    }}
                   >
-                    Remover
-                  </IonButton>
+                    <IonButton
+                      size="small"
+                      color={"dark"}
+                      onClick={() => incrementQuantity(item.id)}
+                    >
+                      +
+                    </IonButton>
+                    <IonLabel>{item.quantidade}</IonLabel>
+                    <IonButton
+                      size="small"
+                      color={"dark"}
+                      onClick={() => decrementQuantity(item.id)}
+                    >
+                      -
+                    </IonButton>
+                  </div>
                 </IonItem>
               );
             })
@@ -137,8 +160,17 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 
             <IonButton
               expand="block"
+              color="danger"
+              style={{ margin: "8px 16px" }}
+              onClick={clearCart}
+            >
+              Limpar Carrinho
+            </IonButton>
+
+            <IonButton
+              expand="block"
               color="success"
-              style={{ margin: 16 }}
+              style={{ margin: "8px 16px" }}
               onClick={handleFinalize}
               disabled={loading}
             >

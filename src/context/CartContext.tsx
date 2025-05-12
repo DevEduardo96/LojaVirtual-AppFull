@@ -20,6 +20,8 @@ interface CartContextType {
   cartItems: ItemCarrinho[];
   addToCart: (produto: Produto) => void;
   removeFromCart: (id: number) => void;
+  incrementQuantity: (id: number) => void;
+  decrementQuantity: (id: number) => void;
   clearCart: () => void;
   triggerAnimation: (id: number) => void;
   saveCartToSupabase: () => Promise<void>;
@@ -49,8 +51,27 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       }
     });
 
-    // Remove a animação após 300ms
     setTimeout(() => triggerAnimation(produto.id, false), 300);
+  };
+
+  // Incrementa quantidade
+  const incrementQuantity = (id: number) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item
+      )
+    );
+  };
+
+  // Decrementa quantidade ou remove se for 0
+  const decrementQuantity = (id: number) => {
+    setCartItems((prevItems) =>
+      prevItems
+        .map((item) =>
+          item.id === id ? { ...item, quantidade: item.quantidade - 1 } : item
+        )
+        .filter((item) => item.quantidade > 0)
+    );
   };
 
   // Remove item do carrinho
@@ -96,7 +117,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       console.error("Erro ao salvar no Supabase:", error);
     } else {
       console.log("Carrinho salvo no Supabase com sucesso:", data);
-      // clearCart(); // opcional
     }
   };
 
@@ -106,6 +126,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
         cartItems,
         addToCart,
         removeFromCart,
+        incrementQuantity,
+        decrementQuantity,
         clearCart,
         triggerAnimation,
         saveCartToSupabase,

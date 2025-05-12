@@ -8,18 +8,10 @@ import {
   IonIcon,
   IonLabel,
   setupIonicReact,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonList,
-  IonItem,
-  IonModal,
-  IonButton,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route, Redirect } from "react-router-dom";
-import { home, cart, heart, person, notifications } from "ionicons/icons";
+import { home, cart, notifications, person } from "ionicons/icons";
 
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/normalize.css";
@@ -27,155 +19,20 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/typography.css";
 import "@ionic/react/css/padding.css";
 import "@ionic/react/css/flex-utils.css";
-import "./theme/variables.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import "./theme/variables.css";
+import "./App.css";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Favorites from "./pages/Notificacao";
 import Profile from "./pages/Profile";
 
-import "./App.css";
-
-import { CartProvider, useCart } from "./context/CartContext";
+import { CartProvider } from "./context/CartContext";
+import CartModal from "./components/CartModal"; // ✅ Usando o componente correto
 
 setupIonicReact();
-
-type Produto = {
-  id: number;
-  Nome: string;
-  Preco: number;
-  Imagem: { url: string }[];
-};
-
-const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
-  isOpen,
-  onClose,
-}) => {
-  const { cartItems, removeFromCart, saveCartToSupabase } = useCart();
-  const [loading, setLoading] = useState(false);
-
-  const totalGeral = cartItems.reduce(
-    (total, item) => total + item.Preco * item.quantidade,
-    0
-  );
-
-  const handleFinalize = async () => {
-    setLoading(true);
-    await saveCartToSupabase();
-    setLoading(false);
-    alert("Carrinho salvo com sucesso!");
-  };
-
-  return (
-    <IonModal
-      isOpen={isOpen}
-      onDidDismiss={onClose}
-      breakpoints={[0, 0.4, 0.75]}
-      initialBreakpoint={0.4}
-      handleBehavior="cycle"
-    >
-      <IonHeader>
-        <IonToolbar
-          style={{
-            "--background": "black",
-            "--color": "white",
-          }}
-        >
-          <IonTitle>
-            <h1>Carrinho de Compras</h1>
-          </IonTitle>
-          <IonButton
-            className="btn-fechar"
-            slot="end"
-            onClick={onClose}
-            style={{
-              "--background": "#c3ff30",
-              "--color": "black",
-            }}
-          >
-            Fechar
-          </IonButton>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonContent>
-        <IonList>
-          {cartItems.length > 0 ? (
-            cartItems.map((item) => (
-              <IonItem key={item.id}>
-                <img
-                  src={
-                    Array.isArray(item.Imagem) && item.Imagem[0]?.url
-                      ? item.Imagem[0].url
-                      : "https://via.placeholder.com/60"
-                  }
-                  alt={item.Nome}
-                  style={{
-                    width: 60,
-                    height: 60,
-                    objectFit: "cover",
-                    marginRight: 10,
-                    borderRadius: 8,
-                  }}
-                  onError={(e) =>
-                    (e.currentTarget.src =
-                      "https://via.placeholder.com/60?text=Erro")
-                  }
-                />
-                <IonLabel className="ion-text-wrap">
-                  <h2>{item.Nome}</h2>
-                  <p>
-                    R$ {item.Preco.toFixed(2)} x {item.quantidade}
-                  </p>
-                  <p>Total: R$ {(item.Preco * item.quantidade).toFixed(2)}</p>
-                </IonLabel>
-                <IonButton
-                  color="danger"
-                  slot="end"
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  Remover
-                </IonButton>
-              </IonItem>
-            ))
-          ) : (
-            <IonItem>
-              <IonLabel>
-                <p>O Carrinho está vazio</p>
-              </IonLabel>
-            </IonItem>
-          )}
-        </IonList>
-
-        {cartItems.length > 0 && (
-          <>
-            <IonItem lines="none">
-              <IonLabel className="ion-text-wrap">
-                <h2 style={{ fontWeight: "bold" }}>Total geral:</h2>
-              </IonLabel>
-              <IonLabel slot="end">
-                <h2 style={{ color: "green", fontWeight: "bold" }}>
-                  R$ {totalGeral.toFixed(2)}
-                </h2>
-              </IonLabel>
-            </IonItem>
-
-            <IonButton
-              expand="block"
-              color="success"
-              style={{ margin: 16 }}
-              onClick={handleFinalize}
-              disabled={loading}
-            >
-              {loading ? "Salvando..." : "Finalizar Compra"}
-            </IonButton>
-          </>
-        )}
-      </IonContent>
-    </IonModal>
-  );
-};
 
 const App: React.FC = () => {
   const [isCartOpen, setCartOpen] = useState(false);
@@ -184,6 +41,7 @@ const App: React.FC = () => {
     <IonApp>
       <CartProvider>
         <IonReactRouter>
+          {/* ✅ CartModal corretamente referenciado */}
           <CartModal isOpen={isCartOpen} onClose={() => setCartOpen(false)} />
 
           <IonTabs>
