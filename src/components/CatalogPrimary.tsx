@@ -117,6 +117,7 @@ const CatalogPrimary: React.FC = () => {
                       id: product.id,
                       Nome: product.nome,
                       Preco: product.preco,
+                      Imagem: [{ url: product.imagem }],
                     });
                     setAlertMessage(`${product.nome} adicionado ao carrinho!`);
                   }}

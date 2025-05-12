@@ -1,35 +1,40 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { supabase } from "../services/supabaseClient"; // ✅ 1. importa o Supabase
+import { supabase } from "../services/supabaseClient";
 
+// Tipagem base de um produto
 export interface Produto {
   id: number;
   Nome: string;
   Preco: number;
 }
 
+// Item no carrinho estende Produto
 interface ItemCarrinho extends Produto {
   Imagem?: any;
   quantidade: number;
   isAnimating?: boolean;
 }
 
+// Interface do contexto
 interface CartContextType {
   cartItems: ItemCarrinho[];
   addToCart: (produto: Produto) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
   triggerAnimation: (id: number) => void;
-  saveCartToSupabase: () => Promise<void>; // ✅ adiciona no contexto
+  saveCartToSupabase: () => Promise<void>;
 }
 
+// Criação do contexto
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Provedor do contexto
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [cartItems, setCartItems] = useState<ItemCarrinho[]>([]);
 
-  // Adiciona item ao carrinho
+  // Adiciona produto ao carrinho
   const addToCart = (produto: Produto) => {
     setCartItems((prevItems) => {
       const itemExistente = prevItems.find((item) => item.id === produto.id);
@@ -44,7 +49,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       }
     });
 
-    setTimeout(() => triggerAnimation(produto.id, false), 300); // Remove animação após 300ms
+    // Remove a animação após 300ms
+    setTimeout(() => triggerAnimation(produto.id, false), 300);
   };
 
   // Remove item do carrinho
@@ -57,7 +63,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     setCartItems([]);
   };
 
-  // Dispara a animação ao adicionar/remover um item
+  // Controla a animação de adição/remoção
   const triggerAnimation = (id: number, animate = true) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -90,8 +96,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       console.error("Erro ao salvar no Supabase:", error);
     } else {
       console.log("Carrinho salvo no Supabase com sucesso:", data);
-      // Você pode também limpar o carrinho aqui, se quiser:
-      // clearCart();
+      // clearCart(); // opcional
     }
   };
 
@@ -103,7 +108,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
         removeFromCart,
         clearCart,
         triggerAnimation,
-        saveCartToSupabase, // ✅ 3. expõe para outros componentes
+        saveCartToSupabase,
       }}
     >
       {children}
@@ -111,6 +116,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   );
 };
 
+// Hook para uso do contexto
 export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
   if (!context) {
