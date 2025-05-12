@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
-import "./css/ListaProdutos.css";
+import { useCart } from "../context/CartContext";
+import "./css/ListaProdutos.css"; // Certifique-se de que esse arquivo existe e contém o CSS fornecido
 
-type Produto = {
-  id: number; // corrigido: tipo numérico (padrão Supabase)
+type ProdutoSupabase = {
+  id: number;
   nome: string;
   preco: number;
-  imagem: string; // URL direta da imagem
+  imagem: string;
 };
 
-type Props = {
-  addToCart: (produto: Produto) => void;
-};
+const API_URL = "https://backend-app-vs0e.onrender.com"; // Ajuste conforme necessário
 
-const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
-  const [products, setProducts] = useState<Produto[]>([]);
+const CatalogPrimary: React.FC = () => {
+  const [products, setProducts] = useState<ProdutoSupabase[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
+  const { addToCart } = useCart(); // Importando o hook para manipulação do carrinho
+
   useEffect(() => {
     const fetchProdutos = async () => {
+      setLoading(true);
+      const cached = localStorage.getItem("produtosCache");
+
+      if (!navigator.onLine && cached) {
+        console.warn("Sem internet. Carregando produtos do cache.");
+        setProducts(JSON.parse(cached));
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("produtos")
         .select("*")
@@ -27,9 +39,16 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
       if (error) {
         console.error("Erro ao buscar produtos:", error);
+        if (cached) {
+          console.warn("Erro na API. Carregando produtos do cache.");
+          setProducts(JSON.parse(cached));
+        }
       } else if (data) {
         setProducts(data);
+        localStorage.setItem("produtosCache", JSON.stringify(data));
       }
+
+      setLoading(false);
     };
 
     fetchProdutos();
@@ -37,63 +56,78 @@ const CatalogPrimary: React.FC<Props> = ({ addToCart }) => {
 
   const favoritarProduto = (produtoId: number) => {
     alert("Favoritos ainda não implementados no Supabase.");
-    // Aqui futuramente você pode usar Supabase Auth + tabela favoritos
   };
 
   return (
-    <div className="c-simple">
+    <div className="catalogo-simple">
       {alertMessage && (
         <div className="alert-overlay" onClick={() => setAlertMessage(null)}>
           <div className="alert-box">{alertMessage}</div>
         </div>
       )}
-      {products.map((product) => {
-        const isFavorited = favoritedIds.includes(product.id);
 
-        return (
-          <div key={product.id} className="cd-simple">
-            <div className="card-header">
-              <span className="discount">-10%</span>
-              <span
-                className={`heart ${isFavorited ? "favorited" : ""}`}
-                onClick={() => favoritarProduto(product.id)}
-                style={{ cursor: "pointer" }}
-              >
-                ♥
-              </span>
+      {loading
+        ? Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="card-simple skeleton-card">
+              <div className="card-header">
+                <span className="skeleton-text-line width-40"></span>
+              </div>
+              <div className="skeleton-image skeleton-effect-blink"></div>
+              <div className="skeleton-text-line"></div>
+              <div className="skeleton-text-line width-60"></div>
+              <div className="skeleton-text-line width-30"></div>
+              <div className="skeleton-button skeleton-effect-blink"></div>
             </div>
-            <img
-              src={product.imagem}
-              alt={product.nome}
-              className="product-image"
-              onError={(e) =>
-                (e.currentTarget.src =
-                  "https://via.placeholder.com/150?text=Imagem+Indisponível")
-              }
-            />
-            <div className="product-title">{product.nome}</div>
-            <div className="product-footer">
-              <span className="price">R$ {product.preco.toFixed(2)}</span>
-              <span className="rating">4.5 ⭐</span>
-            </div>
+          ))
+        : products.map((product) => {
+            const isFavorited = favoritedIds.includes(product.id);
+            const imageUrl = product.imagem?.startsWith("http")
+              ? product.imagem
+              : "https://via.placeholder.com/150?text=Sem+Imagem";
 
-            <button
-              className="add-to-cart-btn"
-              onClick={() => {
-                addToCart({
-                  id: product.id,
-                  Nome: product.nome,
-                  Preco: product.preco,
-                  Imagem: [{ url: product.imagem }], // Adaptação ao antigo formato
-                } as any); // usar "as any" para forçar o tipo, ou declare dois tipos diferentes
-                setAlertMessage(`${product.nome} adicionado ao carrinho!`);
-              }}
-            >
-              Adicionar
-            </button>
-          </div>
-        );
-      })}
+            return (
+              <div key={product.id} className="card-simple">
+                <div className="card-header">
+                  <span className="discount">-10%</span>
+                  <span
+                    className={`heart ${isFavorited ? "active" : ""}`}
+                    onClick={() => favoritarProduto(product.id)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    ♥
+                  </span>
+                </div>
+                <img
+                  src={imageUrl}
+                  alt={product.nome}
+                  className="product-image"
+                  onError={(e) =>
+                    (e.currentTarget.src =
+                      "https://via.placeholder.com/150?text=Imagem+Indisponível")
+                  }
+                />
+                <div className="product-title">{product.nome}</div>
+                <div className="product-footer">
+                  <span className="price">R$ {product.preco.toFixed(2)}</span>
+                  <span className="rating">4.5 ⭐</span>
+                </div>
+
+                <button
+                  className="add-to-cart-btn"
+                  onClick={() => {
+                    addToCart({
+                      id: product.id,
+                      Nome: product.nome,
+                      Preco: product.preco,
+                    });
+                    setAlertMessage(`${product.nome} adicionado ao carrinho!`);
+                  }}
+                >
+                  Adicionar
+                </button>
+              </div>
+            );
+          })}
     </div>
   );
 };

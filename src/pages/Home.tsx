@@ -3,12 +3,11 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonTitle,
   IonToolbar,
   IonSearchbar,
 } from "@ionic/react";
 
-import { useCart } from "../context/CartContext"; // ajuste o caminho conforme seu projeto
+import { useCart } from "../context/CartContext";
 
 import "./css/Home.css";
 import Cart from "../components/ExploreContainer";
@@ -26,26 +25,41 @@ const Home: React.FC<HomeProps> = ({ onCartClick }) => {
   return (
     <IonPage>
       <IonHeader>
+        {/* Top Bar */}
         <IonToolbar color="dark" className="barra-superior">
-          <h1 className="txbarra-superior"></h1>
+          <h1
+            className="txbarra-superior"
+            aria-label="Barra superior de navegação"
+          ></h1>
         </IonToolbar>
 
+        {/* Toolbar com Carrinho, Busca e Localização */}
         <IonToolbar className="ion-toolbar">
-          <IonTitle className="titulo">
+          <div className="header-content">
             <Cart onCartClick={onCartClick} />
-            <IonSearchbar className="busca" placeholder="Digite sua busca..." />
-            <div className="localizacao">
-              <i className="ri-map-pin-line"></i>
+            <IonSearchbar
+              className="busca"
+              placeholder="Digite sua busca..."
+              animated
+              debounce={300}
+              aria-label="Campo de busca de produtos"
+            />
+            <div className="localizacao" aria-label="Localização atual">
+              <i className="ri-map-pin-line" aria-hidden="true"></i>
               <span>Rua Fictícia, 123 - Centro, Cidade Exemplo</span>
             </div>
-          </IonTitle>
+          </div>
         </IonToolbar>
       </IonHeader>
+
       <IonContent fullscreen>
-        <div className="p-1">
+        <section className="p-1">
           <Slider />
-          <h2 className="categoriaspro">categorias de produtos</h2>
-        </div>
+          <h2 className="categoriaspro" aria-label="Título das categorias">
+            Categorias de Produtos
+          </h2>
+        </section>
+
         <CategoryCatalog />
         <CatalogPrimary addToCart={addToCart} />
       </IonContent>

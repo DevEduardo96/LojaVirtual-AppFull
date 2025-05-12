@@ -41,24 +41,31 @@ import { CartProvider, useCart } from "./context/CartContext";
 
 setupIonicReact();
 
-// Agora o Produto reflete os dados do Supabase
 type Produto = {
   id: number;
   Nome: string;
   Preco: number;
-  Imagem: { url: string }[]; // adaptado para manter compatibilidade
+  Imagem: { url: string }[];
 };
 
 const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
 }) => {
-  const { cartItems, removeFromCart } = useCart();
+  const { cartItems, removeFromCart, saveCartToSupabase } = useCart();
+  const [loading, setLoading] = useState(false);
 
   const totalGeral = cartItems.reduce(
     (total, item) => total + item.Preco * item.quantidade,
     0
   );
+
+  const handleFinalize = async () => {
+    setLoading(true);
+    await saveCartToSupabase();
+    setLoading(false);
+    alert("Carrinho salvo com sucesso!");
+  };
 
   return (
     <IonModal
@@ -91,13 +98,18 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           </IonButton>
         </IonToolbar>
       </IonHeader>
+
       <IonContent>
         <IonList>
           {cartItems.length > 0 ? (
             cartItems.map((item) => (
               <IonItem key={item.id}>
                 <img
-                  src={item.Imagem[0]?.url || "https://via.placeholder.com/60"}
+                  src={
+                    Array.isArray(item.Imagem) && item.Imagem[0]?.url
+                      ? item.Imagem[0].url
+                      : "https://via.placeholder.com/60"
+                  }
                   alt={item.Nome}
                   style={{
                     width: 60,
@@ -137,16 +149,28 @@ const CartModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         </IonList>
 
         {cartItems.length > 0 && (
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <h2 style={{ fontWeight: "bold" }}>Total geral:</h2>
-            </IonLabel>
-            <IonLabel slot="end">
-              <h2 style={{ color: "green", fontWeight: "bold" }}>
-                R$ {totalGeral.toFixed(2)}
-              </h2>
-            </IonLabel>
-          </IonItem>
+          <>
+            <IonItem lines="none">
+              <IonLabel className="ion-text-wrap">
+                <h2 style={{ fontWeight: "bold" }}>Total geral:</h2>
+              </IonLabel>
+              <IonLabel slot="end">
+                <h2 style={{ color: "green", fontWeight: "bold" }}>
+                  R$ {totalGeral.toFixed(2)}
+                </h2>
+              </IonLabel>
+            </IonItem>
+
+            <IonButton
+              expand="block"
+              color="success"
+              style={{ margin: 16 }}
+              onClick={handleFinalize}
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : "Finalizar Compra"}
+            </IonButton>
+          </>
         )}
       </IonContent>
     </IonModal>
@@ -178,7 +202,7 @@ const App: React.FC = () => {
               />
               <Route
                 exact
-                path="/Favorites"
+                path="/favorites"
                 render={() => (
                   <Favorites onCartClick={() => setCartOpen(true)} />
                 )}

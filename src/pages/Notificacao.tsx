@@ -1,24 +1,61 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   IonContent,
   IonHeader,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonSearchbar,
 } from "@ionic/react";
 
-import { useCart } from "../context/CartContext"; // ajuste o caminho conforme seu projeto
-
+import { useCart } from "../context/CartContext";
 import "./css/Home.css";
 import Cart from "../components/ExploreContainer";
+import NotificationCenter from "../components/NotificationCenter";
+
+import { supabase } from "../services/supabaseClient";
 
 interface HomeProps {
   onCartClick: () => void;
 }
 
 const Home: React.FC<HomeProps> = ({ onCartClick }) => {
-  const { addToCart } = useCart();
+  useCart();
+
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("Erro ao obter sessão:", error.message);
+      } else {
+        console.log("Sessão atual:", session); // Debug
+        const uid = session?.user?.id || null;
+        setUserId(uid);
+      }
+      setLoading(false);
+    };
+
+    fetchUserId();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        console.log("Mudança de autenticação:", session); // Debug
+        const uid = session?.user?.id || null;
+        setUserId(uid);
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      authListener.subscription?.unsubscribe();
+    };
+  }, []);
 
   return (
     <IonPage>
@@ -34,8 +71,15 @@ const Home: React.FC<HomeProps> = ({ onCartClick }) => {
           </IonTitle>
         </IonToolbar>
       </IonHeader>
+
       <IonContent fullscreen>
-        <h1>Notificações apareceram aqui</h1>
+        {loading ? (
+          <p>Carregando notificações...</p>
+        ) : userId ? (
+          <NotificationCenter userId={userId} />
+        ) : (
+          <p>Você não está autenticado.</p>
+        )}
       </IonContent>
     </IonPage>
   );

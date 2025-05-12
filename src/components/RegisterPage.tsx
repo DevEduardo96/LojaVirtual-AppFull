@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../components/css/RegisterPage.css";
+import { supabase } from "../services/supabaseClient";
+import "../components/css/RegisterPage.css"; // CSS permanece igual
 
-// Função de validação
 const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 const validatePassword = (password: string) => password.length >= 6;
 
@@ -11,6 +11,7 @@ const RegisterPage: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+
   const [errors, setErrors] = useState({
     email: "",
     password: "",
@@ -19,78 +20,77 @@ const RegisterPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm((prevForm) => ({ ...prevForm, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let formIsValid = true;
+
+    let valid = true;
     let newErrors = { email: "", password: "", confirmPassword: "" };
 
-    // Validação
     if (!validateEmail(form.email)) {
       newErrors.email = "Por favor, insira um e-mail válido.";
-      formIsValid = false;
+      valid = false;
     }
 
     if (!validatePassword(form.password)) {
       newErrors.password = "A senha deve ter pelo menos 6 caracteres.";
-      formIsValid = false;
+      valid = false;
     }
 
     if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = "As senhas não coincidem.";
-      formIsValid = false;
+      valid = false;
     }
 
     setErrors(newErrors);
+    if (!valid) return;
 
-    if (!formIsValid) return;
-
-    // Enviar dados para o Strapi
     try {
-      const response = await fetch(
-        "https://backend-app-vs0e.onrender.com/api/auth/local/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: form.email, // ou outro campo se quiser um username diferente
-            email: form.email,
-            password: form.password,
-          }),
-        }
-      );
+      const { data, error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+      });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("Cadastro bem-sucedido!");
-        console.log("Token JWT:", data.jwt);
-        // Você pode armazenar o JWT aqui se quiser autenticação contínua
-        // localStorage.setItem("token", data.jwt);
-      } else {
-        alert(data.error?.message || "Erro ao registrar usuário.");
+      if (error) {
+        console.error("Erro ao criar conta:", error.message);
+        alert("Erro ao registrar: " + error.message); // Alerta padrão
+        return;
       }
-    } catch (error) {
-      console.error("Erro:", error);
-      alert("Erro de conexão com o servidor.");
+
+      const user = data.user;
+      if (!user) {
+        alert("Erro: Usuário não retornado."); // Alerta padrão
+        return;
+      }
+
+      const { error: insertError } = await supabase.from("usuarios").insert([
+        {
+          user_id: user.id,
+          nome: form.email,
+          email: form.email,
+        },
+      ]);
+
+      if (insertError) {
+        console.error("Erro ao inserir no Supabase:", insertError.message);
+        alert("Erro ao salvar usuário na tabela."); // Alerta padrão
+      } else {
+        alert("Usuário registrado com sucesso!"); // Alerta padrão
+      }
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+      alert("Erro inesperado ao registrar."); // Alerta padrão
     }
   };
 
   return (
     <div className="container">
-      {/* Texto de políticas de privacidade */}
       <div className="privacy-text">
         <p>
           Ao se registrar, você concorda com nossa{" "}
-          <a
-            href="https://www.seusite.com/politica-de-privacidade"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="#" target="_blank" rel="noopener noreferrer">
             Política de Privacidade
           </a>
           .
