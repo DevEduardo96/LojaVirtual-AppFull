@@ -1,3 +1,10 @@
+:root {
+  --branco: #ffff;
+  --gelo: #f1f1f1;
+  --verde: #ccff00;
+  --preto: #000000;
+}
+
 .product-details-container {
   display: flex;
   flex-direction: column;
@@ -171,4 +178,31 @@
   100% {
     background-color: #e0e0e0;
   }
+}
+
+.thumbnail-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.thumbnail-row img.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: contain; /* ou 'cover' se preferir preencher */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background-color: white;
+  padding: 4px;
+}
+
+.image-carousel img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+  background-color: var(--gelo);
 }

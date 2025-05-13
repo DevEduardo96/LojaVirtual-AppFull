@@ -8,9 +8,7 @@ import {
   IonToolbar,
   IonTitle,
   IonButton,
-  IonSpinner,
   IonIcon,
-  IonSearchbar,
 } from "@ionic/react";
 import { star } from "ionicons/icons";
 import { supabase } from "../services/supabaseClient";
@@ -23,6 +21,7 @@ type Produto = {
   preco: number;
   descricao?: string;
   imagem: string;
+  imagens?: string[]; // <-- NOVO campo para múltiplas imagens
 };
 
 const ProductDetails: React.FC = () => {
@@ -32,6 +31,7 @@ const ProductDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<"desc" | "reviews">("desc");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { addToCart } = useCart();
 
@@ -47,6 +47,7 @@ const ProductDetails: React.FC = () => {
         setError("Produto não encontrado.");
       } else {
         setProduct(data);
+        setSelectedImage(data.imagem); // define imagem principal
       }
       setLoading(false);
     };
@@ -70,12 +71,10 @@ const ProductDetails: React.FC = () => {
                 <div className="skeleton-thumbnail" key={i} />
               ))}
             </div>
-
             <div className="size-rating-row">
               <div className="skeleton-size" />
               <div className="skeleton-rating" />
             </div>
-
             <div className="skeleton-title" />
             <div className="skeleton-price" />
             <div className="tab-buttons">
@@ -85,6 +84,21 @@ const ProductDetails: React.FC = () => {
             <div className="skeleton-description" />
             <div className="skeleton-buy-button" />
           </div>
+        </IonContent>
+      </IonPage>
+    );
+  }
+
+  if (!product) {
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar color="dark">
+            <IonTitle>Erro</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <p>{error || "Produto não encontrado."}</p>
         </IonContent>
       </IonPage>
     );
@@ -102,22 +116,28 @@ const ProductDetails: React.FC = () => {
         <div className="product-details-container">
           <div className="image-carousel">
             <img
-              src={product.imagem}
+              src={selectedImage || product.imagem}
               alt={product.nome}
               onError={(e) =>
                 (e.currentTarget.src = "https://via.placeholder.com/300")
               }
             />
-            <div className="thumbnail-row">
-              {[...Array(5)].map((_, i) => (
-                <img
-                  key={i}
-                  src={product.imagem}
-                  alt={`Miniatura ${i}`}
-                  className="thumbnail"
-                />
-              ))}
-            </div>
+            {product.imagens && product.imagens.length > 0 && (
+              <div className="thumbnail-row">
+                {product.imagens.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`Miniatura ${index}`}
+                    className="thumbnail"
+                    onClick={() => setSelectedImage(url)}
+                    onError={(e) =>
+                      (e.currentTarget.src = "https://via.placeholder.com/50")
+                    }
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="size-rating-row">
