@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useCart } from "../context/CartContext";
-import "./ExploreContainer.css";
+import "./css/ExploreContainer.css";
 
 interface CartProps {
   onCartClick: () => void;

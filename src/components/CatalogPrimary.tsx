@@ -110,20 +110,33 @@ const CatalogPrimary: React.FC = () => {
                   <span className="rating">4.5 ⭐</span>
                 </div>
 
-                <button
-                  className="add-to-cart-btn"
-                  onClick={() => {
-                    addToCart({
-                      id: product.id,
-                      Nome: product.nome,
-                      Preco: product.preco,
-                      Imagem: [{ url: product.imagem }],
-                    });
-                    setAlertMessage(`${product.nome} adicionado ao carrinho!`);
-                  }}
-                >
-                  Adicionar
-                </button>
+                <div className="product-buttons">
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => {
+                      addToCart({
+                        id: product.id,
+                        Nome: product.nome,
+                        Preco: product.preco,
+                        Imagem: [{ url: product.imagem }],
+                      });
+                      setAlertMessage(
+                        `${product.nome} adicionado ao carrinho!`
+                      );
+                    }}
+                  >
+                    Adicionar
+                  </button>
+
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => {
+                      window.location.href = `/produto/${product.id}`;
+                    }}
+                  >
+                    Detalhes
+                  </button>
+                </div>
               </div>
             );
           })}

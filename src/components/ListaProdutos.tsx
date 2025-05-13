@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
 import { useCart } from "../context/CartContext";
-import "./css/ListaProdutos.css"; // Certifique-se de que esse arquivo existe e contém o CSS fornecido
+import "./css/ListaProdutos.css";
 
 type ProdutoSupabase = {
   id: number;
@@ -10,15 +10,13 @@ type ProdutoSupabase = {
   imagem: string;
 };
 
-const API_URL = "https://backend-app-vs0e.onrender.com"; // Ajuste conforme necessário
-
-const CatalogPrimary: React.FC = () => {
+const ListaProdutos: React.FC = () => {
   const [products, setProducts] = useState<ProdutoSupabase[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [favoritedIds, setFavoritedIds] = useState<number[]>([]);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
-  const { addToCart } = useCart(); // Importando o hook para manipulação do carrinho
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProdutos = async () => {
@@ -97,6 +95,7 @@ const CatalogPrimary: React.FC = () => {
                     ♥
                   </span>
                 </div>
+
                 <img
                   src={imageUrl}
                   alt={product.nome}
@@ -106,27 +105,41 @@ const CatalogPrimary: React.FC = () => {
                       "https://via.placeholder.com/150?text=Imagem+Indisponível")
                   }
                 />
+
                 <div className="product-title">{product.nome}</div>
+
                 <div className="product-footer">
                   <span className="price">R$ {product.preco.toFixed(2)}</span>
                   <span className="rating">4.5 ⭐</span>
                 </div>
 
-                <button
-                  className="add-to-cart-btn"
-                  onClick={() => {
-                    addToCart({
-                      id: product.id,
-                      Nome: product.nome,
-                      Preco: product.preco,
-                      Imagem: [{ url: product.imagem }],
-                    });
+                <div className="product-buttons">
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => {
+                      addToCart({
+                        id: product.id,
+                        Nome: product.nome,
+                        Preco: product.preco,
+                        Imagem: [{ url: product.imagem }],
+                      });
+                      setAlertMessage(
+                        `${product.nome} adicionado ao carrinho!`
+                      );
+                    }}
+                  >
+                    Adicionar
+                  </button>
 
-                    setAlertMessage(`${product.nome} adicionado ao carrinho!`);
-                  }}
-                >
-                  Adicionar
-                </button>
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => {
+                      window.location.href = `/produto/${product.id}`;
+                    }}
+                  >
+                    Detalhes
+                  </button>
+                </div>
               </div>
             );
           })}
@@ -134,4 +147,4 @@ const CatalogPrimary: React.FC = () => {
   );
 };
 
-export default CatalogPrimary;
+export default ListaProdutos;

@@ -28,6 +28,7 @@ import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Favorites from "./pages/Notificacao";
 import Profile from "./pages/Profile";
+import ProductDetails from "./components/Detalhes-produtos";
 
 import { CartProvider } from "./context/CartContext";
 import CartModal from "./components/CartModal"; // ✅ Usando o componente correto
@@ -46,6 +47,7 @@ const App: React.FC = () => {
 
           <IonTabs>
             <IonRouterOutlet id="main-content">
+              <Route path="/produto/:id" component={ProductDetails} exact />
               <Route
                 exact
                 path="/home"
